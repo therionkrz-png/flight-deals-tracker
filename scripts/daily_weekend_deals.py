@@ -143,11 +143,22 @@ def main():
             out_date = date.fromisoformat(fare.out_date)
             return_date = date.fromisoformat(fare.return_date)
             nights = (return_date - out_date).days
+   
             lines.append(
                 f"{i}. {city} | "
-                f"{out_date:%d.%m.%Y} – {return_date:%d.%m.%Y} | "
-                f"{nights} {'noc' if nights == 1 else 'noce' if nights in (2, 3, 4) else 'nocy'} | "
-                f"{fare.total_price_eur:.2f} EUR/os."
+                f"{fare.total_price_eur:.2f} EUR/os. w obie strony\n"
+                f"   Wylot: {out_date:%d.%m.%Y}, "
+                f"{fare.outbound.departure_time or 'brak godz.'}–"
+                f"{fare.outbound.arrival_time or 'brak godz.'} | "
+                f"{fare.outbound.origin} → {fare.outbound.destination} | "
+                f"lot {fare.outbound.flight_number or 'brak danych'}\n"
+                f"   Powrót: {return_date:%d.%m.%Y}, "
+                f"{fare.inbound.departure_time or 'brak godz.'}–"
+                f"{fare.inbound.arrival_time or 'brak godz.'} | "
+                f"{fare.inbound.origin} → {fare.inbound.destination} | "
+                f"lot {fare.inbound.flight_number or 'brak danych'}\n"
+                f"   Pobyt: {nights} "
+                f"{'noc' if nights == 1 else 'noce' if nights in (2, 3, 4) else 'nocy'}"
             )
     else:
         lines.append("Nie znaleziono ofert spełniających kryteria.")

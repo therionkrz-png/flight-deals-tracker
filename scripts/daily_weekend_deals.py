@@ -10,7 +10,7 @@ from flight_deals.providers.ryanair import RyanairProvider
 
 ORIGIN = "KRK"
 MAX_PRICE_EUR = 70.0
-TOP_N = 10
+TOP_N = 25
 
 
 def add_months(d, months):

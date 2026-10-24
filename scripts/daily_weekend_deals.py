@@ -189,9 +189,11 @@ def main():
         "poniedziałek", "wtorek", "środa", "czwartek",
         "piątek", "sobota", "niedziela"
     ]
-
-    def data_z_dniem(d):
-        return f"{dni_tygodnia[d.weekday()]}, {d:%d.%m.%Y}"
+ def data_z_dniem(d):
+        return (
+            f'<strong>{dni_tygodnia[d.weekday()]}</strong>, '
+            f'{d:%d.%m.%Y}'
+        )
 
     import html
 
@@ -221,13 +223,13 @@ def main():
                 f'<span style="color:#d00000;font-weight:bold;">'
                 f'{fare.total_price_eur:.2f} EUR/os. w obie strony</span><br>'
                 f'Wylot: {data_z_dniem(out_date)}<br>'
-                f'<span style="color:#173a70;">'
+                f'<span style="color:#173a70;font-weight:bold;">'
                 f'{out_dep}–{out_arr} | {fare.outbound.origin} → '
                 f'{fare.outbound.destination} | lot '
                 f'{html.escape(fare.outbound.flight_number or "brak danych")}'
                 f'</span><br>'
                 f'Powrót: {data_z_dniem(return_date)}<br>'
-                f'<span style="color:#173a70;">'
+                f'<span style="color:#173a70;font-weight:bold;">'
                 f'{in_dep}–{in_arr} | {fare.inbound.origin} → '
                 f'{fare.inbound.destination} | lot '
                 f'{html.escape(fare.inbound.flight_number or "brak danych")}'

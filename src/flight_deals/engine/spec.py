@@ -221,7 +221,7 @@ class SearchSpec(BaseModel):
     # does the sensible thing; ignored entirely by every other shape.
     via: object = "auto"
     budget: Optional[float] = None  # EUR, total per person
-    carriers: List[Carrier] = Field(default_factory=lambda: ["ryanair", "wizzair"])
+    carriers: List[Carrier] = Field(default_factory=lambda: ["ryanair"])
     max_results: int = Field(default=10, ge=1)
     gem: Optional[str] = None  # Task 15b: a curated gem slug (SEARCH-DESIGN §2b) set by
     # --to <gem>, in addition to restricting `destinations` to its gateways — carrying it

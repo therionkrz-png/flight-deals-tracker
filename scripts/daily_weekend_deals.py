@@ -184,7 +184,8 @@ def main():
         print("\nTryb testowy: nie skonfigurowano e-maila, więc nic nie wysłano.")
         return
 
-  dni_tygodnia = [
+
+    dni_tygodnia = [
         "poniedziałek", "wtorek", "środa", "czwartek",
         "piątek", "sobota", "niedziela"
     ]

@@ -184,19 +184,91 @@ def main():
         print("\nTryb testowy: nie skonfigurowano e-maila, więc nic nie wysłano.")
         return
 
+  dni_tygodnia = [
+        "poniedziałek", "wtorek", "środa", "czwartek",
+        "piątek", "sobota", "niedziela"
+    ]
+
+    def data_z_dniem(d):
+        return f"{dni_tygodnia[d.weekday()]}, {d:%d.%m.%Y}"
+
+    import html
+
+    html_lines = [
+        '<html><body style="font-family:Arial,sans-serif;color:#222;">',
+        f"<h2>Weekendowe loty Ryanair z Krakowa ({ORIGIN})</h2>",
+        f"<p>Okres: {today:%d.%m.%Y} – {end_date:%d.%m.%Y}<br>",
+        f"Limit: {MAX_PRICE_EUR:.0f} EUR za osobę, lot w obie strony.</p>",
+        "<hr>"
+    ]
+
+    if offers:
+        for i, fare in enumerate(offers, 1):
+            destination = fare.destination.upper()
+            city = cities.get(destination, f"Nieznane miasto ({destination})")
+            out_date = date.fromisoformat(fare.out_date)
+            return_date = date.fromisoformat(fare.return_date)
+            nights = (return_date - out_date).days
+
+            out_dep = fare.outbound.departure_time or "brak godz."
+            out_arr = fare.outbound.arrival_time or "brak godz."
+            in_dep = fare.inbound.departure_time or "brak godz."
+            in_arr = fare.inbound.arrival_time or "brak godz."
+
+            html_lines.append(
+                f'<p><strong>{i}. {html.escape(city)}</strong><br>'
+                f'<span style="color:#d00000;font-weight:bold;">'
+                f'{fare.total_price_eur:.2f} EUR/os. w obie strony</span><br>'
+                f'Wylot: {data_z_dniem(out_date)}<br>'
+                f'<span style="color:#173a70;">'
+                f'{out_dep}–{out_arr} | {fare.outbound.origin} → '
+                f'{fare.outbound.destination} | lot '
+                f'{html.escape(fare.outbound.flight_number or "brak danych")}'
+                f'</span><br>'
+                f'Powrót: {data_z_dniem(return_date)}<br>'
+                f'<span style="color:#173a70;">'
+                f'{in_dep}–{in_arr} | {fare.inbound.origin} → '
+                f'{fare.inbound.destination} | lot '
+                f'{html.escape(fare.inbound.flight_number or "brak danych")}'
+                f'</span><br>'
+                f'<span style="color:#555;">Pobyt: {nights} '
+                f'{"noc" if nights == 1 else "noce" if nights in (2, 3, 4) else "nocy"}'
+                f'</span></p><hr>'
+            )
+    else:
+        html_lines.append("<p>Nie znaleziono ofert spełniających kryteria.</p>")
+
+    if failures:
+        html_lines.append(
+            f'<p style="color:#a00;"><strong>Uwaga:</strong> '
+            f'nie udało się pobrać danych z {len(failures)} fragmentów. '
+            f'Wyniki mogą być niepełne.</p>'
+        )
+        html_lines.extend(
+            f'<p>{html.escape(failure)}</p>' for failure in failures
+        )
+
+    html_lines.append("</body></html>")
+    html_report = "\n".join(html_lines)
+
     msg = EmailMessage()
     msg["Subject"] = f"Loty weekendowe z KRK — {today:%d.%m.%Y}"
     msg["From"] = email_from
     msg["To"] = email_to
     msg.set_content(report)
+    msg.add_alternative(html_report, subtype="html")
 
-    with smtplib.SMTP(os.getenv("SMTP_HOST", "smtp.gmail.com"),
-                      int(os.getenv("SMTP_PORT", "587")), timeout=30) as smtp:
+    with smtplib.SMTP(
+        os.getenv("SMTP_HOST", "smtp.gmail.com"),
+        int(os.getenv("SMTP_PORT", "587")),
+        timeout=30
+    ) as smtp:
         smtp.starttls()
         smtp.login(smtp_user, smtp_password)
         smtp.send_message(msg)
 
     print(f"\nWiadomość wysłana do: {email_to}")
+
 
 
 if __name__ == "__main__":

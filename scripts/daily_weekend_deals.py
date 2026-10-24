@@ -189,11 +189,9 @@ def main():
         "poniedziałek", "wtorek", "środa", "czwartek",
         "piątek", "sobota", "niedziela"
     ]
- def data_z_dniem(d):
-        return (
-            f'<strong>{dni_tygodnia[d.weekday()]}</strong>, '
-            f'{d:%d.%m.%Y}'
-        )
+    def data_z_dniem(d):
+        dzien = dni_tygodnia[d.weekday()]
+        return f'<strong>{dzien}</strong>, {d:%d.%m.%Y}'
 
     import html
 

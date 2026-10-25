@@ -60,14 +60,10 @@ def load_city_names():
 
 def is_weekend_trip(out_date, return_date):
     nights = (return_date - out_date).days
-    # Sobota–niedziela: 1 noc; piątek–niedziela: 2;
-    # piątek–poniedziałek: 3.
     return (
         (out_date.weekday() == 5 and nights == 1 and return_date.weekday() == 6)
         or (out_date.weekday() == 4 and nights == 2 and return_date.weekday() == 6)
-        or (out_date.weekday() == 4 and nights == 3 and return_date.weekday() == 0)
     )
-
 
 def main():
     today = datetime.now(ZoneInfo("Europe/Warsaw")).date()

@@ -2,7 +2,8 @@ name: Daily Ryanair weekend deals
 
 on:
   schedule:
-    - cron: "30 3 * * *"
+       - cron: "30 5 * * 1,2,4,6"
+      timezone: "Europe/Warsaw"
   workflow_dispatch:
 
 permissions:
